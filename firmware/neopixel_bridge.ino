@@ -84,6 +84,10 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
 			FastLED.show();
 			break;
 		}
+		case CMD_GET_PROTOCOL_VERSION:
+			*resp = PROTOCOL_VERSION;
+			*resp_len = 1;
+			break;
 		default:
 			FAIL(ERR_UNKNOWN_COMMAND);
 	}

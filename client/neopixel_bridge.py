@@ -9,9 +9,12 @@ CMD_GET_MAX_LEDS = 0
 CMD_SET_NUM_LEDS = 1
 CMD_SET_LED = 2
 CMD_SET_LEDS = 3
-CMD_INVALID = 4
+CMD_GET_PROTOCOL_VERSION = 4
+CMD_INVALID = 0x7f
 
 RESPONSE_CMD_FLAG = 0x80
+
+CURRENT_PROTOCOL_VERSION = 1
 
 
 class NeopixelBridge(object):
@@ -61,3 +64,10 @@ class NeopixelBridge(object):
         rgbs = [x for rgb in rgb_list for x in rgb]
         resp_code, resp_data = self.do_command(CMD_SET_LEDS, [idx] + rgbs)
         return resp_code
+
+    def get_protocol_version(self):
+        resp_code, resp_data = self.do_command(CMD_GET_PROTOCOL_VERSION)
+        if resp_code == 0:
+            return struct.unpack('B', resp_data)[0]
+        else:
+            raise Exception('Failed to get protocol version, error: %#02x' % (resp_code))

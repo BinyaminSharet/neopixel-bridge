@@ -7,16 +7,19 @@
 // Total number of leds in the chain
 #define LED_COUNT		16
 
-
 #define SOP_MARKER 		0xfd
+
+// Whenever the protocol changes, this should be increased
+#define PROTOCOL_VERSION	1
 
 enum proto_commands {
 	CMD_GET_MAX_LEDS,
 	CMD_SET_NUM_LEDS,
 	CMD_SET_LED,
 	CMD_SET_LEDS,
+	CMD_GET_PROTOCOL_VERSION,
 
-	CMD_INVALID,
+	CMD_INVALID = 0x7f,
 };
 
 #define RESPONSE_COMMAND_FLAG	( 0x80 )
