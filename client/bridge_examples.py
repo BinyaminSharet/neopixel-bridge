@@ -14,6 +14,7 @@ Options:
 '''
 import colorsys
 import docopt
+import time
 from neopixel_bridge import NeopixelBridge
 
 
@@ -53,9 +54,10 @@ def prog_show_rainbow(bridge, args):
         n = int(args.get('rotate', 0)) * num_leds + 1
 
         for rounds in range(n):
-            for i, (r, g, b) in enumerate(base):
-                bridge.set_led(i, r, g, b)
+            bridge.set_leds(0, base)
             base = base[-1:] + base[:-1]
+            if (rounds < (n - 1)):
+                time.sleep(0.1)
 
 
 def run_program(device, program, args):

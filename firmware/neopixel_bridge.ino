@@ -68,6 +68,22 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
 			set_led_rgb(data[0], data[1], data[2], data[3]);
 			FastLED.show();
 			break;
+		case CMD_SET_LEDS:
+		{
+			uint8_t idx = data[0];
+			uint8_t num_leds = (header->len - 1) / 3;
+			uint8_t color_idx = 1;
+			ASSERT(header->len > 1, ERR_PACKET_TOO_SHORT);
+			ASSERT(idx < user_num_leds, ERR_INDEX_TOO_LARGE);
+			ASSERT(idx + num_leds <= user_num_leds, ERR_INDEX_TOO_LARGE);
+			while(num_leds--) {
+				set_led_rgb(idx, data[color_idx], data[color_idx + 1], data[color_idx + 2]);
+				color_idx += 3;
+				idx += 1;
+			}
+			FastLED.show();
+			break;
+		}
 		default:
 			FAIL(ERR_UNKNOWN_COMMAND);
 	}

@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 import serial
 import struct
-import colorsys
 
 
 SOP_MARKER = 0xfd
 
 CMD_GET_MAX_LEDS = 0
 CMD_SET_NUM_LEDS = 1
-CMD_SET_PATTERN = 2
-CMD_SET_LED = 3
+CMD_SET_LED = 2
+CMD_SET_LEDS = 3
 CMD_INVALID = 4
 
 RESPONSE_CMD_FLAG = 0x80
@@ -43,24 +42,21 @@ class NeopixelBridge(object):
             return None
 
     def set_num_leds(self, n):
-        resp_code, resp_data = self.send(CMD_SET_NUM_LEDS, [n])
+        resp_code, resp_data = self.do_command(CMD_SET_NUM_LEDS, [n])
         return resp_code
 
     def set_led(self, idx, r, g, b):
-        resp_code, resp_data = self.send(CMD_SET_LED, [idx, r, g, b])
+        resp_code, resp_data = self.do_command(CMD_SET_LED, [idx, r, g, b])
         return resp_code
 
+    def set_leds(self, idx, rgb_list):
+        '''
+        set values of leds from a given index
 
-if __name__ == '__main__':
-    bridge = NeopixelBridge('/dev/tty.usbmodem1431')
-    num_leds = bridge.get_max_leds()
-    if not num_leds:
-        print('Failed to get number of leds')
-    else:
-        step = 255 // num_leds
-        for i in range(num_leds):
-            # bridge.set_led(i, 0x10 * i, 0x00, 0xff - (10 * i))
-            # bridge.set_led(i, 0x10 * i, 0x00, 0x00)
-            r, g, b = colorsys.hsv_to_rgb((1.0 / num_leds) * i, 1, 0.1)
-            bridge.set_led(i, int(r * 255), int(g * 255), int(b * 255))
-            # FairyLight --> 0xFFE42D
+        :param idx: index of first led to set
+        :param rgb_list: list of rgb tuples
+        '''
+        # flatten rgb_list
+        rgbs = [x for rgb in rgb_list for x in rgb]
+        resp_code, resp_data = self.do_command(CMD_SET_LEDS, [idx] + rgbs)
+        return resp_code
