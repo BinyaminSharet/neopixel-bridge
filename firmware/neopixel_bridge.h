@@ -13,14 +13,14 @@
 enum proto_commands {
 	CMD_GET_MAX_LEDS,
 	CMD_SET_NUM_LEDS,
-	CMD_SET_PATTERN,
 	CMD_SET_LED,
+	CMD_SET_LEDS,
 
 	CMD_INVALID,
 };
 
-#define RESPONSE_CODE_FLAG	( 0x80 )
-#define RESPONSE_CODE(x) 	( x | RESPONSE_CODE_FLAG )
+#define RESPONSE_COMMAND_FLAG	( 0x80 )
+#define RESPONSE_COMMAND(x) 	( x | RESPONSE_COMMAND_FLAG )
 
 #define LEN_CMD_SET_NUM_LEDS	1  // num leds
 #define LEN_CMD_SET_LED			4  // index, r, g, b

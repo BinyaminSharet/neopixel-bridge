@@ -94,17 +94,19 @@ error_case:
 }
 
 static inline void comm_send(struct comm_header * header, uint8_t * data, uint8_t data_len) {
-	header->command = RESPONSE_CODE(header->command);
-	header->len = data_len;
+	uint8_t status = STATUS_OK;
+	header->command = RESPONSE_COMMAND(header->command);
+	header->len = data_len + 1;
 	Serial.write((uint8_t*)header, sizeof(*header));
-	if (header->len) {
-		Serial.write(data, header->len);
+	Serial.write(&status, 1);
+	if (data_len) {
+		Serial.write(data, data_len);
 	}
 }
 
 static inline void comm_send_error(struct comm_header * inheader, uint8_t status) {
 	struct comm_header outheader;
-	outheader.command = RESPONSE_CODE(inheader->command);
+	outheader.command = RESPONSE_COMMAND(inheader->command);
 	outheader.len = 1;
 	Serial.write((uint8_t *)&outheader, sizeof(outheader));
 	Serial.write(&status, sizeof(status));
@@ -132,6 +134,7 @@ void loop()
 
 	comm_send(&header, resp, resp_len);
 	return;
+
 error_case:
 	comm_send_error(&header, status);
 	return;	
