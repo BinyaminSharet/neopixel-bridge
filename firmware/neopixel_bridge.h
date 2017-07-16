@@ -10,7 +10,7 @@
 #define SOP_MARKER 		0xfd
 
 // Whenever the protocol changes, this should be increased
-#define PROTOCOL_VERSION	1
+#define PROTOCOL_VERSION	2
 
 enum proto_commands {
 	CMD_GET_MAX_LEDS,
@@ -18,6 +18,8 @@ enum proto_commands {
 	CMD_SET_LED,
 	CMD_SET_LEDS,
 	CMD_GET_PROTOCOL_VERSION,
+	CMD_GET_LED,
+	CMD_GET_LEDS,
 
 	CMD_INVALID = 0x7f,
 };
@@ -27,6 +29,8 @@ enum proto_commands {
 
 #define LEN_CMD_SET_NUM_LEDS	1  // num leds
 #define LEN_CMD_SET_LED			4  // index, r, g, b
+#define LEN_CMD_GET_LED			1  // index
+#define LEN_CMD_GET_LEDS		2  // index, number of leds
 
 enum proto_status {
 	STATUS_OK,

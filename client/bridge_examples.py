@@ -16,6 +16,7 @@ import colorsys
 import docopt
 import time
 from neopixel_bridge import NeopixelBridge
+from neopixel_bridge import CURRENT_PROTOCOL_VERSION
 
 
 programs = {}
@@ -60,18 +61,42 @@ def prog_show_rainbow(bridge, args):
                 time.sleep(0.1)
 
 
+@program('test', 'test the APIs', 'max_leds=x')
+def prog_test(bridge, args):
+    print('check protocol version')
+    version = bridge.get_protocol_version()
+    assert(version == CURRENT_PROTOCOL_VERSION)
+
+    print('check maximum number of leds')
+    num_leds = bridge.get_max_leds()
+    expected_max_leds = int(args.get('max_leds', 16))
+    assert(num_leds == expected_max_leds)
+
+    print('check set/get led')
+    expected_rgb = (0x30, 0x00, 0x00)
+    bridge.set_led(1, *expected_rgb)
+    received_rgb = bridge.get_led(1)
+    assert(expected_rgb == received_rgb)
+
+    print('check set/get leds')
+    expected_rgbs = [(0x20, 0x00, 0x20), (0x30, 0x00, 0x30), (0x40, 0x00, 0x40)]
+    bridge.set_leds(0, expected_rgbs)
+    received_rgbs = bridge.get_leds(0, len(expected_rgb))
+    assert(expected_rgbs == received_rgbs)
+
+    print('cleanup')
+    prog_leds_off(bridge, None)
+
+
 def run_program(device, program, args):
     if program not in programs:
         print('Invalid program selected: %s' % (program))
         print('Select one of: %s' % (','.join(sorted(programs.keys()))))
         return
-    try:
-        bridge = NeopixelBridge(device)
-        p_func, p_desc, _ = programs[program]
-        print('Running program %s - %s' % (program, p_desc))
-        p_func(bridge, args)
-    except Exception as ex:
-        print('Caught exception: %s' % ex)
+    bridge = NeopixelBridge(device)
+    p_func, p_desc, _ = programs[program]
+    print('Running program %s - %s' % (program, p_desc))
+    p_func(bridge, args)
 
 
 def print_programs():

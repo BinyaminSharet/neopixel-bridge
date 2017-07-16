@@ -24,6 +24,12 @@ void set_led_rgb(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
 	leds[FIXIDX(idx)] = CRGB(r, g, b);
 }
 
+void get_led_rgb(uint8_t idx, uint8_t * p_rgb) {
+	*p_rgb++ = leds[FIXIDX(idx)].red;
+	*p_rgb++ = leds[FIXIDX(idx)].green;
+	*p_rgb++ = leds[FIXIDX(idx)].blue;
+}
+
 // set the rgb color to a range of leds
 // from - from led
 // to - to led (exclusive)
@@ -99,6 +105,33 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
 			*resp = PROTOCOL_VERSION;
 			*resp_len = 1;
 			break;
+		case CMD_GET_LED:
+			{
+				uint8_t idx = data[0];
+				ASSERT(header->len == LEN_CMD_GET_LED, ERR_WRONG_PACKET_SIZE);
+				ASSERT(idx < user_num_leds, ERR_INDEX_TOO_LARGE);
+				resp[0] = idx;
+				*resp_len = 1;
+				get_led_rgb(idx, &resp[1]);
+				*resp_len += 3;
+				break;
+			}
+		case CMD_GET_LEDS:
+			{
+				uint8_t idx = data[0];
+				uint8_t num_leds = data[1];
+				ASSERT(header->len == LEN_CMD_GET_LEDS, ERR_WRONG_PACKET_SIZE);
+				ASSERT(idx < user_num_leds, ERR_INDEX_TOO_LARGE);
+				ASSERT(idx + num_leds <= user_num_leds, ERR_INDEX_TOO_LARGE);
+				*resp++ = idx;
+				*resp_len = 1;
+				while(num_leds--) {
+					get_led_rgb(idx++, resp);
+					*resp_len += 3;
+					resp += 3;
+				}
+				break;
+			}
 		default:
 			FAIL(ERR_UNKNOWN_COMMAND);
 	}
@@ -140,6 +173,7 @@ static inline void comm_error_response(struct comm_header * header, uint8_t stat
 	resp.header.command = RESPONSE_COMMAND(header->command);
 	resp.header.len = 1;
 	resp.status = status;
+	set_led_rgb(status % LED_COUNT, 0x00, 0x00, 0x80);
 	Serial.write((uint8_t *)&resp, COMM_RESP_HEADER_SIZE);
 }
 
