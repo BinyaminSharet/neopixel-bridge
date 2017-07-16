@@ -41,24 +41,26 @@ def prog_leds_off(bridge, args):
             bridge.set_led(i, 0, 0, 0)
 
 
-@program('rainbow', 'show a rainbow', 'rotate=x')
+@program('rainbow', 'show a rainbow', 'rotate=x,delay=x,value=x')
 def prog_show_rainbow(bridge, args):
     num_leds = bridge.get_max_leds()
     if not num_leds:
         print('Failed to get number of leds')
     else:
         base = []
+        hsv_value = float(args.get('value', 0.4))
         for i in range(num_leds):
-            r, g, b = colorsys.hsv_to_rgb((1.0 / num_leds) * i, 1, 0.2)
+            r, g, b = colorsys.hsv_to_rgb((1.0 / num_leds) * i, 1, hsv_value)
             base.append((int(r * 255), int(g * 255), int(b * 255)))
 
         n = int(args.get('rotate', 0)) * num_leds + 1
+        delay = float(args.get('delay', 0.05))
 
         for rounds in range(n):
             bridge.set_leds(0, base)
             base = base[-1:] + base[:-1]
             if (rounds < (n - 1)):
-                time.sleep(0.1)
+                time.sleep(delay)
 
 
 @program('test', 'test the APIs', 'max_leds=x')
