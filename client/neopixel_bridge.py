@@ -19,7 +19,9 @@ class NeopixelBridge(object):
     def __init__(self, port):
         self._serial = serial.Serial(port, 115200)
 
-    def do_command(self, cmd, data):
+    def do_command(self, cmd, data=None):
+        if data is None:
+            data = []
         buff = struct.pack('BBB', SOP_MARKER, cmd, len(data))
         if data:
             buff += ''.join(chr(x) for x in data)
@@ -33,13 +35,12 @@ class NeopixelBridge(object):
         return resp_code, resp_data
 
     def get_max_leds(self):
-        resp_code, resp_data = self.do_command(CMD_GET_MAX_LEDS, [])
+        resp_code, resp_data = self.do_command(CMD_GET_MAX_LEDS)
         if resp_code == 0:
             # print 'Max leds: %s' % (resp_data.encode('hex'))
             return struct.unpack('B', resp_data)[0]
         else:
-            print 'Got bad resp code: %#x' % (resp_code)
-            return None
+            raise Exception('Failed to get max leds, error: %#02x' % (resp_code))
 
     def set_num_leds(self, n):
         resp_code, resp_data = self.do_command(CMD_SET_NUM_LEDS, [n])
