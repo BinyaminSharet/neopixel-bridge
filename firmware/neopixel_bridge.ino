@@ -41,10 +41,21 @@ void turn_off_leds(uint8_t from, uint8_t to) {
 	set_range_rgb(from, to, 0, 0, 0);
 }
 
+// basic header of both command and response
+// the len is the length of all data that appears after it
 struct comm_header {
 	uint8_t command;
 	uint8_t len;
 };
+
+#define COMM_HEADER_SIZE	( 2 )
+
+struct comm_response_header {
+	struct comm_header header;
+	uint8_t status;
+};
+
+#define COMM_RESP_HEADER_SIZE	( COMM_HEADER_SIZE + 1 )
 
 #define FAIL(x) 	do { status = x; goto error_case; } while( 0 )
 #define ASSERT(cond, x)		do { if (!(cond)) FAIL(x); } while( 0 )
@@ -113,23 +124,23 @@ error_case:
 	return status;
 }
 
-static inline void comm_send(struct comm_header * header, uint8_t * data, uint8_t data_len) {
-	uint8_t status = STATUS_OK;
-	header->command = RESPONSE_COMMAND(header->command);
-	header->len = data_len + 1;
-	Serial.write((uint8_t*)header, sizeof(*header));
-	Serial.write(&status, 1);
+static inline void comm_valid_response(struct comm_header * header, uint8_t * data, uint8_t data_len) {
+	struct comm_response_header resp;
+	resp.header.command = RESPONSE_COMMAND(header->command);
+	resp.header.len = data_len + 1;
+	resp.status = STATUS_OK;
+	Serial.write((uint8_t *)&resp, COMM_RESP_HEADER_SIZE);
 	if (data_len) {
 		Serial.write(data, data_len);
 	}
 }
 
-static inline void comm_send_error(struct comm_header * inheader, uint8_t status) {
-	struct comm_header outheader;
-	outheader.command = RESPONSE_COMMAND(inheader->command);
-	outheader.len = 1;
-	Serial.write((uint8_t *)&outheader, sizeof(outheader));
-	Serial.write(&status, sizeof(status));
+static inline void comm_error_response(struct comm_header * header, uint8_t status) {
+	struct comm_response_header resp;
+	resp.header.command = RESPONSE_COMMAND(header->command);
+	resp.header.len = 1;
+	resp.status = status;
+	Serial.write((uint8_t *)&resp, COMM_RESP_HEADER_SIZE);
 }
 
 void loop()
@@ -152,11 +163,11 @@ void loop()
 	status = handle_command(&header, data, resp, &resp_len);
 	ASSERT(status == STATUS_OK, status);
 
-	comm_send(&header, resp, resp_len);
+	comm_valid_response(&header, resp, resp_len);
 	return;
 
 error_case:
-	comm_send_error(&header, status);
+	comm_error_response(&header, status);
 	return;	
 }
 
