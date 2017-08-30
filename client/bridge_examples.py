@@ -50,7 +50,9 @@ def prog_show_rainbow(bridge, args):
         base = []
         hsv_value = float(args.get('value', 0.4))
         for i in range(num_leds):
-            r, g, b = colorsys.hsv_to_rgb((1.0 / num_leds) * i, 1, hsv_value)
+            width = 1.0  # 0-1
+            start_color = 0.0  # 0-1
+            r, g, b = colorsys.hsv_to_rgb((width / num_leds) * i + start_color, 1, hsv_value)
             base.append((int(r * 255), int(g * 255), int(b * 255)))
 
         n = int(args.get('rotate', 0)) * num_leds + 1
