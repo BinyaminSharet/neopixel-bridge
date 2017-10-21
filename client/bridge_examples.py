@@ -67,28 +67,31 @@ def prog_show_rainbow(bridge, args):
 
 @program('test', 'test the APIs', 'max_leds=x')
 def prog_test(bridge, args):
-    print('check protocol version')
+    print('- check protocol version')
     version = bridge.get_protocol_version()
     assert(version == CURRENT_PROTOCOL_VERSION)
 
-    print('check maximum number of leds')
+    print('- check maximum number of leds')
     num_leds = bridge.get_max_leds()
-    expected_max_leds = int(args.get('max_leds', 16))
-    assert(num_leds == expected_max_leds)
+    if args.get('max_leds', None):
+        expected_max_leds = int(args.get('max_leds', 16))
+        assert(num_leds == expected_max_leds)
+    else:
+        print('  max_leds was not passed, ignoring the response')
 
-    print('check set/get led')
+    print('- check set/get led')
     expected_rgb = (0x30, 0x00, 0x00)
     bridge.set_led(1, *expected_rgb)
     received_rgb = bridge.get_led(1)
     assert(expected_rgb == received_rgb)
 
-    print('check set/get leds')
+    print('- check set/get leds')
     expected_rgbs = [(0x20, 0x00, 0x20), (0x30, 0x00, 0x30), (0x40, 0x00, 0x40)]
     bridge.set_leds(0, expected_rgbs)
     received_rgbs = bridge.get_leds(0, len(expected_rgb))
     assert(expected_rgbs == received_rgbs)
 
-    print('cleanup')
+    print('- cleanup')
     prog_leds_off(bridge, None)
 
 
