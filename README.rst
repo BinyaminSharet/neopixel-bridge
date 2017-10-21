@@ -8,8 +8,8 @@ Firmware
 
 Arduino program that accepts commands from serial and sets the pixels accordingly.
 
-Currently I use it for a 24-pixel ring, but this can be changed in the header file
-(firmware/neopixel_bridge.h)
+Currently I use it for a 16/24-pixel ring and 60 pixel strip,
+but this can be changed in the header file (firmware/neopixel_bridge.h)
 
 Client
 ------

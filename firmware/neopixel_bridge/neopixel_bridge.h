@@ -5,7 +5,7 @@
 #define CONTROL_PIN		6
 
 // Total number of leds in the chain
-#define LED_COUNT		24
+#define LED_COUNT	60
 
 #define SOP_MARKER 		0xfd
 
@@ -43,6 +43,6 @@ enum proto_status {
 	ERR_INDEX_TOO_LARGE,
 };
 
-#define MAX_DATA_SIZE	100
+#define MAX_DATA_SIZE	200
 
 #endif  // NEOPIXEL_BRIDGE_H
