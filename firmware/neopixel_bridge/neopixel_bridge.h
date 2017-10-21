@@ -43,6 +43,6 @@ enum proto_status {
 	ERR_INDEX_TOO_LARGE,
 };
 
-#define MAX_DATA_SIZE	50
+#define MAX_DATA_SIZE	100
 
 #endif  // NEOPIXEL_BRIDGE_H
