@@ -5,7 +5,7 @@
 #define CONTROL_PIN		6
 
 // Total number of leds in the chain
-#define LED_COUNT		16
+#define LED_COUNT		24
 
 #define SOP_MARKER 		0xfd
 
