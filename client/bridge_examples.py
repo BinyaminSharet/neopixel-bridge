@@ -31,7 +31,7 @@ def program(cmd, desc, possible_args=''):
     return program_wrap
 
 
-@program('off', 'tun all leds off')
+@program('off', 'turn all leds off')
 def prog_leds_off(bridge, args):
     num_leds = bridge.get_max_leds()
     if not num_leds:
