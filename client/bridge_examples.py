@@ -41,7 +41,7 @@ def prog_leds_off(bridge, args):
             bridge.set_led(i, 0, 0, 0)
 
 
-@program('rainbow', 'show a rainbow', 'rotate=x,delay=x,value=x')
+@program('rainbow', 'show a rainbow', 'rotate=x,delay=x,value=x,num_leds=x')
 def prog_show_rainbow(bridge, args):
     num_leds = bridge.get_max_leds()
     if not num_leds:
@@ -49,6 +49,7 @@ def prog_show_rainbow(bridge, args):
     else:
         base = []
         hsv_value = float(args.get('value', 0.4))
+        num_leds = int(args.get('num_leds', num_leds))
         for i in range(num_leds):
             width = 1.0  # 0-1
             start_color = 0.0  # 0-1
