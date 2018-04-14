@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import serial
 import struct
+import time
 
 
 SOP_MARKER = 0xfd
@@ -23,6 +24,9 @@ class NeopixelBridge(object):
 
     def __init__(self, port):
         self._serial = serial.Serial(port, 115200)
+        wait = 2
+        print 'waiting for arduino to initialize (%s seconds)' % wait
+        time.sleep(wait)
 
     def do_command(self, cmd, data=None):
         if data is None:
