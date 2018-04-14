@@ -47,6 +47,20 @@ void turn_off_leds(uint8_t from, uint8_t to) {
 	set_range_rgb(from, to, 0, 0, 0);
 }
 
+void rotate_leds_single() {
+  CRGB first = leds[FIXIDX(0)];
+  for (int i = 0; i < user_num_leds - 1; ++i) {
+    leds[FIXIDX(i)] = leds[FIXIDX(i + 1)];
+  }
+  leds[FIXIDX(user_num_leds - 1)] = first;
+}
+
+void rotate_leds(uint8_t count) {
+  while(count--) {
+    rotate_leds_single();
+  }
+}
+
 // basic header of both command and response
 // the len is the length of all data that appears after it
 struct comm_header {
@@ -132,6 +146,14 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
 				}
 				break;
 			}
+    case CMD_ROTATE_LEDS:
+    {
+      uint8_t count = data[0];
+      ASSERT(header->len == 1, ERR_PACKET_TOO_SHORT);
+      rotate_leds(count);
+      FastLED.show();
+      break;
+    }
 		default:
 			FAIL(ERR_UNKNOWN_COMMAND);
 	}

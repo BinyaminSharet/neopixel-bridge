@@ -20,6 +20,7 @@ enum proto_commands {
 	CMD_GET_PROTOCOL_VERSION,
 	CMD_GET_LED,
 	CMD_GET_LEDS,
+  CMD_ROTATE_LEDS,
 
 	CMD_INVALID = 0x7f,
 };
@@ -31,6 +32,7 @@ enum proto_commands {
 #define LEN_CMD_SET_LED			4  // index, r, g, b
 #define LEN_CMD_GET_LED			1  // index
 #define LEN_CMD_GET_LEDS		2  // index, number of leds
+#define LEN_CMD_ROTATE_LEDS 1  // rotation count
 
 enum proto_status {
 	STATUS_OK,

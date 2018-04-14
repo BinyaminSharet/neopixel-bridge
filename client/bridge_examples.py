@@ -59,9 +59,9 @@ def prog_show_rainbow(bridge, args):
         n = int(args.get('rotate', 0)) * num_leds + 1
         delay = float(args.get('delay', 0.05))
 
+        bridge.set_leds(0, base)
         for rounds in range(n):
-            bridge.set_leds(0, base)
-            base = base[-1:] + base[:-1]
+            bridge.rotate_leds(1)
             if (rounds < (n - 1)):
                 time.sleep(delay)
 

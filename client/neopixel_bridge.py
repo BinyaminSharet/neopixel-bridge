@@ -13,6 +13,7 @@ CMD_SET_LEDS = 3
 CMD_GET_PROTOCOL_VERSION = 4
 CMD_GET_LED = 5
 CMD_GET_LEDS = 6
+CMD_ROTATE_LEDS = 7
 CMD_INVALID = 0x7f
 
 RESPONSE_CMD_FLAG = 0x80
@@ -94,3 +95,10 @@ class NeopixelBridge(object):
         for i in range(1, len(resp_data), 3):
             rgbs.append(struct.unpack('BBB', resp_data[i:i + 3]))
         return rgbs
+
+    def rotate_leds(self, count):
+        '''
+        Rotate the led pattern that is already set
+        :param count: how many times to rotate
+        '''
+        self.do_command(CMD_ROTATE_LEDS, [count])
