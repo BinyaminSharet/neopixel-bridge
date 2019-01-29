@@ -10,7 +10,7 @@
 #define SOP_MARKER 		0xfd
 
 // Whenever the protocol changes, this should be increased
-#define PROTOCOL_VERSION	2
+#define PROTOCOL_VERSION	3
 
 enum proto_commands {
 	CMD_GET_MAX_LEDS,
@@ -20,8 +20,7 @@ enum proto_commands {
 	CMD_GET_PROTOCOL_VERSION,
 	CMD_GET_LED,
 	CMD_GET_LEDS,
-  CMD_ROTATE_LEDS,
-
+	CMD_ROTATE_LEDS,,
 	CMD_INVALID = 0x7f,
 };
 
