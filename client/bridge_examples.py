@@ -56,13 +56,19 @@ def prog_show_rainbow(bridge, args):
             r, g, b = colorsys.hsv_to_rgb((width / num_leds) * i + start_color, 1, hsv_value)
             base.append((int(r * 255), int(g * 255), int(b * 255)))
 
-        n = int(args.get('rotate', 0)) * num_leds + 1
+        n = int(args.get('rotate', 0))
+        if n:
+            n = n * num_leds + 1
         delay = float(args.get('delay', 0.05))
 
         bridge.set_leds(0, base)
-        for rounds in range(n):
+        count = 0
+        while True:
+            if n and (count == n):
+                break
+            count += 1
             bridge.rotate_leds(1)
-            if (rounds < (n - 1)):
+            if (not n) or (count < n):
                 time.sleep(delay)
 
 
