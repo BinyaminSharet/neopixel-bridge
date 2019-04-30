@@ -50,6 +50,7 @@ def prog_show_rainbow(bridge, args):
         base = []
         hsv_value = float(args.get('value', 0.4))
         num_leds = int(args.get('num_leds', num_leds))
+        bridge.set_num_leds(num_leds)
         for i in range(num_leds):
             width = 1.0  # 0-1
             start_color = 0.0  # 0-1
