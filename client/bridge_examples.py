@@ -66,18 +66,24 @@ def prog_show_rainbow(bridge, args):
         has_rotate = proto >= 3
         if has_rotate:
             bridge.set_leds(0, base)
+        has_rotate_with_delay = proto >= 4
         count = 0
         while True:
             if n and (count == n):
                 break
-            count += 1
-            if has_rotate:
-                bridge.rotate_leds(1)
+            if has_rotate_with_delay and delay != 0:
+                delay_ms = min(int(delay * 1000), 255)
+                bridge.rotate_leds_with_delay(num_leds, delay_ms)
+                count += n
             else:
-                bridge.set_leds(0, base)
-                base = base[-1:] + base[:-1]
-            if (not n) or (count < n):
-                time.sleep(delay)
+                if has_rotate:
+                    bridge.rotate_leds(1)
+                else:
+                    bridge.set_leds(0, base)
+                    base = base[-1:] + base[:-1]
+                if (not n) or (count < n):
+                    time.sleep(delay)
+                count += 1
 
 
 @program('test', 'test the APIs', 'max_leds=x')

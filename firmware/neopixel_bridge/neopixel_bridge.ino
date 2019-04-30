@@ -149,9 +149,21 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
     case CMD_ROTATE_LEDS:
     {
       uint8_t count = data[0];
-      ASSERT(header->len == 1, ERR_PACKET_TOO_SHORT);
+      ASSERT(header->len == LEN_CMD_ROTATE_LEDS, ERR_PACKET_TOO_SHORT);
       rotate_leds(count);
       FastLED.show();
+      break;
+    }
+    case CMD_ROTATE_LEDS_WITH_DELAY:
+    {
+      uint8_t count = data[0];
+      uint8_t rot_delay = data[1];
+      ASSERT(header->len == LEN_CMD_ROTATE_LEDS_WITH_DELAY, ERR_PACKET_TOO_SHORT);
+      while(count--) {
+        rotate_leds(1);
+        FastLED.show();
+        delay(rot_delay);
+      }
       break;
     }
 		default:
@@ -226,4 +238,3 @@ error_case:
 	comm_error_response(&header, status);
 	return;	
 }
-

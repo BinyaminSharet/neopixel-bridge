@@ -14,11 +14,12 @@ CMD_GET_PROTOCOL_VERSION = 4
 CMD_GET_LED = 5
 CMD_GET_LEDS = 6
 CMD_ROTATE_LEDS = 7
+CMD_ROTATE_LEDS_WITH_DELAY = 8
 CMD_INVALID = 0x7f
 
 RESPONSE_CMD_FLAG = 0x80
 
-CURRENT_PROTOCOL_VERSION = 3
+CURRENT_PROTOCOL_VERSION = 4
 
 
 class NeopixelBridge(object):
@@ -102,3 +103,12 @@ class NeopixelBridge(object):
         :param count: how many times to rotate
         '''
         self.do_command(CMD_ROTATE_LEDS, [count])
+
+    def rotate_leds_with_delay(self, count, rotate_delay):
+        '''
+        Rotate the led pattern that is already set
+        :param count: how many times to rotate
+        :param rotate_delay: millies to wait between each rotation
+        '''
+        self.do_command(CMD_ROTATE_LEDS_WITH_DELAY, [count, rotate_delay])
+
