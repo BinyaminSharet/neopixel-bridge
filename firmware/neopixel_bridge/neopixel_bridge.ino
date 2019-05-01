@@ -47,18 +47,30 @@ void turn_off_leds(uint8_t from, uint8_t to) {
     set_range_rgb(from, to, 0, 0, 0);
 }
 
-void rotate_leds_single() {
-  CRGB first = leds[FIXIDX(0)];
-  for (int i = 0; i < user_num_leds - 1; ++i) {
-    leds[FIXIDX(i)] = leds[FIXIDX(i + 1)];
-  }
-  leds[FIXIDX(user_num_leds - 1)] = first;
+#define CLOCKWISE 0
+#define COUNTER_CLOCKWISE 1
+
+void rotate_leds_single(int direction) {
+    if (direction == CLOCKWISE) {
+        CRGB first = leds[FIXIDX(user_num_leds - 1)];
+        for (int i = 0; i < user_num_leds - 1; ++i) {
+            leds[FIXIDX(i + 1)] = leds[FIXIDX(i)];
+        }
+        leds[FIXIDX(0)] = first;
+    }
+    else {
+        CRGB first = leds[FIXIDX(0)];
+        for (int i = 0; i < user_num_leds - 1; ++i) {
+            leds[FIXIDX(i)] = leds[FIXIDX(i + 1)];
+        }
+        leds[FIXIDX(user_num_leds - 1)] = first;
+    }
 }
 
-void rotate_leds(uint8_t count) {
-  while(count--) {
-    rotate_leds_single();
-  }
+void rotate_leds(uint8_t count, int direction) {
+    while(count--) {
+        rotate_leds_single(direction);
+    }
 }
 
 // basic header of both command and response
@@ -148,23 +160,33 @@ uint8_t handle_command(struct comm_header * header, uint8_t * data, uint8_t * re
         }
         case CMD_ROTATE_LEDS:
         {
-          uint8_t count = data[0];
-          ASSERT(header->len == LEN_CMD_ROTATE_LEDS, ERR_PACKET_TOO_SHORT);
-          rotate_leds(count);
-          FastLED.show();
-          break;
+            uint8_t count = data[0];
+            int direction = COUNTER_CLOCKWISE;
+            ASSERT(header->len >= LEN_CMD_ROTATE_LEDS, ERR_PACKET_TOO_SHORT);
+            // optional argument - rotation direction
+            if (header->len > LEN_CMD_ROTATE_LEDS) {
+                direction = data[LEN_CMD_ROTATE_LEDS] ? CLOCKWISE : COUNTER_CLOCKWISE;
+            }
+            rotate_leds(count, direction);
+            FastLED.show();
+            break;
         }
         case CMD_ROTATE_LEDS_WITH_DELAY:
         {
-          uint8_t count = data[0];
-          uint8_t rot_delay = data[1];
-          ASSERT(header->len == LEN_CMD_ROTATE_LEDS_WITH_DELAY, ERR_PACKET_TOO_SHORT);
-          while(count--) {
-            rotate_leds(1);
-            FastLED.show();
-            delay(rot_delay);
-          }
-          break;
+            uint8_t count = data[0];
+            uint8_t rot_delay = data[1];
+            int direction = COUNTER_CLOCKWISE;
+            ASSERT(header->len >= LEN_CMD_ROTATE_LEDS_WITH_DELAY, ERR_PACKET_TOO_SHORT);
+            // optional argument - rotation direction
+            if (header->len > LEN_CMD_ROTATE_LEDS_WITH_DELAY) {
+                direction = data[LEN_CMD_ROTATE_LEDS_WITH_DELAY] ? CLOCKWISE : COUNTER_CLOCKWISE;
+            }
+            while(count--) {
+                rotate_leds_single(direction);
+                FastLED.show();
+                delay(rot_delay);
+            }
+            break;
         }
         default:
             FAIL(ERR_UNKNOWN_COMMAND);
