@@ -24,9 +24,9 @@ CURRENT_PROTOCOL_VERSION = 4
 
 class NeopixelBridge(object):
 
-    def __init__(self, port):
+    def __init__(self, port, init_time=2):
         self._serial = serial.Serial(port, 115200)
-        wait = 2
+        wait = init_time
         print 'waiting for arduino to initialize (%s seconds)' % wait
         time.sleep(wait)
 
