@@ -97,18 +97,28 @@ class NeopixelBridge(object):
             rgbs.append(struct.unpack('BBB', resp_data[i:i + 3]))
         return rgbs
 
-    def rotate_leds(self, count):
+    def rotate_leds(self, count, clockwise=None):
         '''
         Rotate the led pattern that is already set
         :param count: how many times to rotate
+        :param clockwise: boolean, None for default
         '''
-        self.do_command(CMD_ROTATE_LEDS, [count])
+        if clockwise is None:
+            self.do_command(CMD_ROTATE_LEDS, [count])
+        else:
+            direction = int(clockwise)
+            self.do_command(CMD_ROTATE_LEDS, [count, direction])
 
-    def rotate_leds_with_delay(self, count, rotate_delay):
+    def rotate_leds_with_delay(self, count, rotate_delay, clockwise=None):
         '''
         Rotate the led pattern that is already set
         :param count: how many times to rotate
         :param rotate_delay: millies to wait between each rotation
+        :param clockwise: boolean, None for default
         '''
-        self.do_command(CMD_ROTATE_LEDS_WITH_DELAY, [count, rotate_delay])
+        if clockwise is None:
+            self.do_command(CMD_ROTATE_LEDS_WITH_DELAY, [count, rotate_delay])
+        else:
+            direction = int(clockwise)
+            self.do_command(CMD_ROTATE_LEDS_WITH_DELAY, [count, rotate_delay, direction])
 

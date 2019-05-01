@@ -53,8 +53,8 @@ void turn_off_leds(uint8_t from, uint8_t to) {
 void rotate_leds_single(int direction) {
     if (direction == CLOCKWISE) {
         CRGB first = leds[FIXIDX(user_num_leds - 1)];
-        for (int i = 0; i < user_num_leds - 1; ++i) {
-            leds[FIXIDX(i + 1)] = leds[FIXIDX(i)];
+        for (int i = user_num_leds - 1; i > 0; --i) {
+            leds[FIXIDX(i)] = leds[FIXIDX(i - 1)];
         }
         leds[FIXIDX(0)] = first;
     }
