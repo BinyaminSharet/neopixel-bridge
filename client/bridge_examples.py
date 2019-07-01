@@ -3,7 +3,7 @@
 Example program for using the bridge
 
 Usage:
-    bridge_examples.py --device=<device> --program=<program> [--args=<args>]
+    bridge_examples.py [--device=<device>] --program=<program> [--args=<args>]
     bridge_examples.py --list
 
 Options:
@@ -17,9 +17,18 @@ import docopt
 import time
 from neopixel_bridge import NeopixelBridge
 from neopixel_bridge import CURRENT_PROTOCOL_VERSION
+config = None
+try:
+    from npconfig import config
+except:
+    pass
 
 
 programs = {}
+
+
+def get_device(opts):
+    return opts['--device'] or config['dev']
 
 
 def program(cmd, desc, possible_args=''):
@@ -153,7 +162,7 @@ def main():
         print_programs()
     elif opts['--program']:
         argsdict = build_program_arg_dict(opts['--args'])
-        run_program(opts['--device'], opts['--program'], argsdict)
+        run_program(get_device(opts), opts['--program'], argsdict)
 
 
 if __name__ == '__main__':
